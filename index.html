@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>متجر درع العرب</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #141e30, #243b55);
+      color: #fff;
+      direction: rtl;
+      padding: 40px 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    header h1 {
+      font-size: 36px;
+      color: #f1c40f;
+      text-shadow: 2px 2px #000;
+    }
+
+    .section {
+      margin-bottom: 80px;
+    }
+
+    .section h2 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #f39c12;
+      text-align: center;
+      border-bottom: 2px solid #f39c12;
+      padding-bottom: 10px;
+    }
+
+    .product-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      justify-content: center;
+    }
+
+    .product-card {
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid #f39c12;
+      border-radius: 15px;
+      overflow: hidden;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 25px rgba(255, 255, 255, 0.3);
+    }
+
+    .product-image {
+      position: relative;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-bottom: 1px solid #f39c12;
+    }
+
+    .product-title {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background-color: rgba(241, 196, 15, 0.95);
+      color: #000;
+      padding: 4px 8px;
+      font-weight: bold;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .product-content {
+      padding: 15px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .product-desc {
+      font-size: 14px;
+      color: #eee;
+      margin: 10px 0;
+    }
+
+    .product-price {
+      font-size: 16px;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    .buy-now {
+      background-color: #e67e22;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .buy-now:hover {
+      background-color: #d35400;
+    }
+
+    .confirmation-message {
+      display: none;
+      margin-top: 20px;
+      text-align: center;
+      padding: 20px;
+      background-color: #2ecc71;
+      color: white;
+      border-radius: 10px;
+    }
+
+    .discord-popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .popup-content {
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      text-align: center;
+      width: 300px;
+    }
+
+    .popup-content input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .popup-content button {
+      background-color: #e67e22;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .popup-content button:hover {
+      background-color: #d35400;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>متجر درع العرب</h1>
+  </header>
+
+  <section class="section">
+    <h2>خدمات لاعبين</h2>
+    <div class="product-list" id="products1"></div>
+  </section>
+
+  <section class="section">
+    <h2>مشاريع</h2>
+    <div class="product-list" id="products2"></div>
+  </section>
+
+  <section class="section">
+    <h2>حالة</h2>
+    <div class="product-list" id="products3"></div>
+  </section>
+
+  <div class="confirmation-message" id="confirmationMessage">
+    تم إرسال طلبك بنجاح!
+  </div>
+
+  <!-- Discord Input Popup -->
+  <div class="discord-popup" id="discordPopup">
+    <div class="popup-content">
+      <h3>أدخل اسمك في ديسكورد</h3>
+      <input type="text" id="discordName" placeholder="اسم ديسكورد" />
+      <button onclick="sendOrder()">إرسال الطلب</button>
+    </div>
+  </div>
+
+  <script>
+    const products = [
+      { section: 1, title: 'PACK BRONZE', desc: 'حزمة أسلحة سيارة مكان خاص فلوس لعبة 500الف', price: '200k كردت', img: 'product1.jpg' },
+      { section: 1, title: 'PACK SILVER', desc: '  مكان خاص 1مليون فلوس لعبة سيارتين بيت صغير حزمة اسلحةودرع 30 يوم', price: '500k كردت', img: 'product2.jpg' },
+      { section: 1, title: 'PACK GOLD', desc: 'مكان خاص حزمة اسلحة و درع 3 سيارات بيت كبير 2مليون  30 يوم', price: '1m كردت', img: 'product3.jpg' },
+      { section: 1, title: 'PHONE NUMBER', desc: '', price: '300ķ كردت', img: 'rTSnlYngfFRxjrLvKynracmZY9dWZAFtpyHFy3dO.png' },
+      { section: 1, title: 'الغاء باند موقئات', desc: '', price: '100k كردت', img: 'wizW2B50RA35Ooz9DpDGNjhkw78ronFTi0MD1KuH.jpg' },
+      { section: 1, title: 'الغاء باند نهائي', desc: '', price: '200k كردت', img: 'wizW2B50RA35Ooz9DpDGNjhkw78ronFTi0MD1KuH.jpg' },
+      { section: 1, title:'الغاء ستريم لي عصابة', desc: '', price: 'على حسب البيت', img: 'product7.jpg' },
+      { section: 1, title: 'بيت من اختيارك', desc: '', price: 'على حسب السعر', img: 'product8.jpg' },
+
+      { section: 2, title: 'WEAPON STORE', desc: '', price: '650k كردت', img: 'sddefault (3).jpg' },
+      { section: 2, title: 'BAR', desc: '', price: '100K كردت', img: '104263-1304407802-gta-sa-2011-05-03-11-21-46-84 (1).jpg' },
+      { section: 2, title: 'MOTEL', desc: 'فندق شقق ذاخل الحي)', price: '950k كردت', img: '350px-24HourMotel-GTASA-Idlewood-exterior.jpg' },
+      { section: 2, title: '24/7', desc: '', price: '250k كردت', img: 'piz.jpg' },
+      { section: 2, title: 'pizza store', desc: '', price: '350k كردت', img: 'b9a13245f9fa7e2316f49820383ece83e39fab9d418f4c9a6fbe47bfbfb2ba71.jpg' },
+      { section: 2, title: 'birger shot', desc: '', price: '400k كردت', img: '117492-1289668691-gallery211.jpg' },
+      { section: 2, title: 'cikin store', desc: '', price: '350k كردت', img: 'qqpmsnuvgu451.png' },
+      { section: 2, title: 'انشاء شركة لك من صفر', desc: '', price: 'على حسب اشياء', img: 'car8.jpg' },
+    ];
+
+    // عرض المنتجات
+    function displayProducts() {
+      const productList1 = document.getElementById('products1');
+      const productList2 = document.getElementById('products2');
+      const productList3 = document.getElementById('products3');
+
+      products.forEach(product => {
+        const productCard = document.createElement('div');
+        productCard.classList.add('product-card');
+        productCard.innerHTML = `
+          <div class="product-image">
+            <img src="${product.img}" alt="${product.title}" />
+            <div class="product-title">${product.title}</div>
+          </div>
+          <div class="product-content">
+            <p class="product-desc">${product.desc}</p>
+            <p class="product-price">${product.price}</p>
+            <button class="buy-now" onclick="openDiscordPopup('${product.title}', '${product.price}')">شراء</button>
+          </div>
+        `;
+
+        if (product.section === 1) {
+          productList1.appendChild(productCard);
+        } else if (product.section === 2) {
+          productList2.appendChild(productCard);
+        } else {
+          productList3.appendChild(productCard);
+        }
+      });
+    }
+
+    function openDiscordPopup(title, price) {
+      document.getElementById('discordPopup').style.display = 'flex';
+      window.productDetails = { title, price }; // تخزين تفاصيل المنتج
+    }
+
+    function sendOrder() {
+      const discordName = document.getElementById('discordName').value;
+      if (discordName) {
+        const { title, price } = window.productDetails;
+        const emailSubject = encodeURIComponent(`طلب شراء: ${title}`);
+        const emailBody = encodeURIComponent(`تم شراء المنتج: ${title}\nالسعر: ${price}\nاسم المستخدم في ديسكورد: ${discordName}`);
+        const emailLink = `mailto:il0789845@gmail.com?subject=${emailSubject}&body=${emailBody}`;
+        window.location.href = emailLink; // فتح البريد الإلكتروني مباشرة
+
+        document.getElementById('confirmationMessage').style.display = 'block';
+        document.getElementById('discordPopup').style.display = 'none';
+      } else {
+        alert('يرجى إدخال اسم ديسكورد');
+      }
+    }
+
+    displayProducts();
+  </script>
+</body>
+</html>
